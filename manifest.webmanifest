@@ -1,0 +1,10 @@
+{
+  "name": "City Power Electricity Tracker",
+  "short_name": "Power Tracker",
+  "description": "Track City Power prepaid electricity purchases and statistics",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f6f4f5",
+  "theme_color": "#7d1232",
+  "icons": []
+}
