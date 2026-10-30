@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/purchases/{purchaseId} {
+      function ownsRecord() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function validPurchase() {
+        let data = request.resource.data;
+        return data.keys().hasAll(['id', 'date', 'amount', 'units', 'vat', 'notes'])
+          && data.keys().hasOnly(['id', 'date', 'amount', 'units', 'vat', 'notes'])
+          && data.id == purchaseId
+          && data.id is string
+          && data.id.size() <= 128
+          && data.date is string
+          && data.date.size() == 10
+          && data.amount is number
+          && data.amount > 0
+          && data.units is number
+          && data.units > 0
+          && data.vat is number
+          && data.vat >= 0
+          && data.notes is string
+          && data.notes.size() <= 160;
+      }
+      allow read, delete: if ownsRecord();
+      allow create, update: if ownsRecord() && validPurchase();
+    }
+  }
+}
