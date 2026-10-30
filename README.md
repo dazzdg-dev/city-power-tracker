@@ -1,38 +1,34 @@
-# City Power Tracker — PWA package
+# City Power Tracker — update and sync package
 
-This package contains the complete tracker website and its installability/offline assets. It is an Android-friendly **Progressive Web App (PWA)** installed from a supported browser; it is not a native APK. The app stores records locally and can sync them across devices through a signed-in Firebase account.
+This package updates your existing City Power Tracker GitHub repository. It keeps the full purchase tracker and offers private, live sync through Google sign-in and Firebase. It installs from Chrome as a web app (PWA); it is not an Android APK.
 
-## Upload to the existing GitHub repository from a phone
+## Upload from your phone
 
-1. Download and extract this ZIP on your phone (for example, in Samsung My Files).
-2. Open your **existing** City Power Tracker repository on GitHub in your browser and sign in.
-3. Open the repository root. Choose **Add file → Upload files**.
-4. Select `index.html`, `manifest.webmanifest`, `sw.js`, and `README.md` from the extracted package. If the current app lives in a subfolder, upload these files into that same published folder instead of the repository root.
-5. Upload the complete `icons` folder, including both `icon-192.png` and `icon-512.png`. If mobile GitHub does not let you select a folder, create `icons` in the repository first, open it, then upload both PNG files there.
-6. GitHub will show that `index.html`, `manifest.webmanifest`, and `sw.js` already exist. **Replace the existing files** by committing the uploaded versions. Keep the existing repository; do not create a new repository or delete it.
-7. Commit the changes. Wait for GitHub Pages to publish, then open the same website in Chrome on Android and use Chrome's menu → **Install app** or **Add to Home screen** if offered.
+1. Open the existing repository: https://github.com/dazzdg-dev/city-power-tracker and sign in to GitHub.
+2. Open the ZIP in your phone's Files/Downloads app and extract it.
+3. On the repository page, choose **Add file → Upload files**. If the GitHub app does not show this option, open the repository in Chrome and choose **Desktop site** from Chrome's menu.
+4. Select these eight files from the extracted folder: `index.html`, `manifest.webmanifest`, `sw.js`, `firebase-sync.js`, `firestore.rules`, `icon-192.png`, `icon-512.png`, and `README.md`.
+5. Upload them to the repository's top level (same place as the existing `index.html`). When GitHub asks, replace the files with the same names. Keep the existing repository; do not make a new one. The two icon PNGs must stay at the top level.
+6. Enter a commit message such as `Update tracker with live sync`, then choose **Commit changes**.
+7. In the repository, open **Settings → Pages** and confirm Pages is publishing the `main` branch. Wait for the deployment to finish under **Actions**.
 
-The manifest and service worker use relative paths (`./`) so they work when the app is published from either a user/organization site root or a project repository subpath. The service worker caches the app shell and icons, then removes older tracker caches during activation.
+## Publish the Firestore rules
 
-## Features
+After the repository update, open Firebase Console → `city-power-tracker-sync` → **Firestore Database → Rules**. Replace the rules there with the contents of the included `firestore.rules`, then choose **Publish**. These rules let each signed-in Google account access only its own tracker records and accept the tracker's purchase fields.
 
-- Record date, amount paid, units (kWh), VAT, and an optional note.
-- Local browser storage so records remain after closing and reopening the app on that device.
-- Statistics with date range filtering: spending, units, average cost per kWh, VAT, and purchase count.
-- Purchase history with deletion.
-- CSV export and import. Import skips duplicate rows.
-- Offline app shell after the first successful load.
-- Optional Google sign-in and live, per-account Firestore sync across devices.
+## Turn on live sync
 
-**Back up before changing devices or clearing browser storage.** Existing data stored in the old site's browser remains local to that browser; export it there before switching sites or devices, then import the CSV into the updated tracker.
+1. Open the published tracker on the laptop. Refresh it after the GitHub Pages deployment completes.
+2. Choose **Connect with Google** and sign in. Your saved laptop history is kept and merged into that account's tracker records.
+3. Open the same published tracker on the phone and connect using the same Google account. Purchases, edits, and deletions then sync between connected devices.
 
-## Firebase sync setup
+Connecting uploads the purchase details, including an optional prepaid credit token, to the signed-in account's private Firebase records. The app also keeps a local copy. Use the built-in CSV export for an additional backup.
 
-The Firebase project `city-power-tracker-sync` and web app **City Power Tracker Web** are set up. Google sign-in is enabled, `dazzdg-dev.github.io` is authorized, and Firestore is in Johannesburg (`africa-south1`) with production rules that let each signed-in account access only its own `/users/{uid}/purchases` records. The rules are also included in `firestore.rules` for reference. The Firebase web config is public app configuration; it does not grant database access on its own.
+## Included files and features
 
-1. Upload `index.html`, `firebase-sync.js`, and `sw.js` to the root of the existing GitHub repository. Keep the existing repository, `manifest.webmanifest`, and `icons` folder.
-2. Commit the changes and wait for GitHub Pages to publish.
-3. Open the tracker on the laptop, choose **Connect with Google to sync**, and sign in with the same Google account used on the phone. The first connection merges that device's saved purchases into its private cloud records.
-4. Open the tracker on the phone, connect with that same Google account, and approve Google sign-in. New purchases, edits, and deletions then sync live between connected devices.
+- Full tracker: purchase capture, local persistence, statistics, filters, searchable/sortable history, editing and deletion, CSV import/export.
+- Firebase Google sign-in and live, account-private Firestore sync.
+- Install manifest, root-level 192 × 192 and 512 × 512 maskable icons, and versioned offline app-shell service worker.
+- Firestore security rules for the full purchase record shape.
 
-The tracker keeps its local copy as a fallback and retains CSV backup/import. The Firebase SDK is loaded from Google's official CDN and uses redirect sign-in on mobile. Firebase is on its no-cost Spark plan; small personal use fits its quotas, but review Firebase usage if the app is shared widely.
+If Chrome still shows the previous version after deployment, close the installed app, open the site in Chrome, refresh it, then use Chrome's **Install app** or **Add to Home screen** option. This installs the website as a PWA.

@@ -1,33 +1,138 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#102a43"><meta name="description" content="Record City Power electricity purchases, view spending statistics and back up your history.">
-  <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><title>City Power Tracker</title>
-  <style>
-    :root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#102a43;background:#f2f6f8;font-synthesis:none}*{box-sizing:border-box}body{margin:0}header{background:#102a43;color:white;padding:22px max(18px,calc((100% - 960px)/2));}header h1{margin:0;font-size:1.5rem}header p{margin:4px 0 0;color:#c9d9e6}main{max-width:960px;margin:auto;padding:18px}.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:16px}.tabs button,.button{border:0;border-radius:10px;padding:11px 15px;background:#dce7ee;color:#102a43;font:inherit;font-weight:650;white-space:nowrap}.tabs button.active,.primary{background:#087e8b;color:white}section.card{background:white;border-radius:16px;padding:18px;margin:0 0 16px;box-shadow:0 2px 12px #102a4310}h2{font-size:1.15rem;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}label{display:block;font-weight:600;font-size:.9rem}input{width:100%;margin-top:6px;padding:12px;border:1px solid #b7c7d3;border-radius:9px;font:inherit}input:focus{outline:2px solid #087e8b}.field.full{grid-column:1/-1}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#edf5f6;border-radius:12px;padding:13px}.stat small{display:block;color:#526879}.stat strong{font-size:1.3rem}.muted{color:#526879}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:560px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #e4ebf0}th{font-size:.84rem;color:#526879}.delete{border:0;background:#fff0ed;color:#a2341d;padding:7px 10px;border-radius:8px}#notice{min-height:1.4rem;color:#087e8b;font-weight:600}footer{max-width:960px;padding:0 18px 24px;margin:auto;color:#526879;font-size:.88rem}@media(max-width:560px){main{padding:13px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.tabs button{padding:10px 12px}.stats{grid-template-columns:1fr 1fr}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7d1232">
+<meta name="description" content="Private City Power prepaid electricity purchase tracker">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png">
+<title>City Power Tracker</title>
+<style>
+:root{--wine:#7d1232;--wine2:#9e2148;--bg:#f6f4f5;--card:#fff;--ink:#211a1d;--muted:#70676b;--line:#e8dfe3;--green:#16794b;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(135deg,var(--wine),#4d0a20);color:#fff;padding:22px 16px 18px;border-radius:0 0 22px 22px}
+header .eyebrow{font-size:12px;opacity:.82;text-transform:uppercase;letter-spacing:.12em}h1{margin:4px 0;font-size:25px}header p{margin:4px 0 0;opacity:.88}
+main{max-width:850px;margin:auto;padding:14px 12px 90px}.tabs{display:flex;gap:8px;margin:0 0 14px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
+.tab{flex:1;border:1px solid var(--line);border-radius:12px;padding:11px 6px;background:#fff;color:var(--wine);font-weight:700}.tab.active{background:var(--wine);color:#fff;border-color:var(--wine)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:13px;box-shadow:0 2px 8px #32101a08}
+h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:700;color:var(--muted)}input,select,textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid #d9cdd2;border-radius:10px;background:#fff;color:var(--ink);min-width:0}textarea{resize:vertical;min-height:65px}
+button,.filebtn{font:inherit;font-weight:700;border:0;border-radius:11px;padding:12px 14px;cursor:pointer}.primary{background:var(--wine);color:#fff}.secondary{background:#f4e8ed;color:var(--wine)}.danger{background:#fff0ef;color:var(--red)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.actions button{flex:1}.hint{font-size:12px;color:var(--muted);margin-top:8px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff}.stat .label{font-size:12px;color:var(--muted)}.stat .value{font-size:21px;font-weight:800;margin-top:3px;overflow-wrap:anywhere}.stat small{color:var(--muted)}
+.hidden{display:none!important}.purchase{padding:13px 0;border-bottom:1px solid var(--line)}.purchase:last-child{border-bottom:0}.purchase-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.purchase .amount{font-weight:800;font-size:18px;color:var(--wine)}.purchase .meta{font-size:12px;color:var(--muted);margin-top:3px}.purchase .details{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;margin-top:8px}.purchase .mini-actions{display:flex;gap:6px;margin-top:9px}.purchase .mini-actions button{padding:7px 10px;font-size:12px}.empty{text-align:center;padding:24px 10px;color:var(--muted)}.bar-wrap{margin:10px 0}.bar-label{display:flex;justify-content:space-between;font-size:12px;gap:8px}.bar{height:9px;background:#f0e6ea;border-radius:99px;overflow:hidden;margin-top:5px}.bar span{display:block;height:100%;background:var(--wine2);border-radius:99px}.notice{font-size:12px;background:#fff8e8;padding:10px 12px;border-radius:10px;color:#795719;margin-bottom:12px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:10px}
+@media(min-width:650px){.stats{grid-template-columns:repeat(4,1fr)}main{padding-top:20px}.tabs{position:static}.grid.three{grid-template-columns:repeat(3,1fr)}}
+</style>
 </head>
 <body>
-<header><h1>City Power Tracker</h1><p>Keep a local record of electricity purchases</p></header>
+<header><div class="eyebrow">Personal utility tracker</div><h1>⚡ City Power Tracker</h1><p>Record prepaid purchases. Track spend, units and trends.</p></header>
 <main>
-  <nav class="tabs" aria-label="Tracker sections"><button class="active" data-view="purchase">Purchase</button><button data-view="statistics">Statistics</button><button data-view="history">History & backup</button></nav>
-  <section class="card" id="cloud-sync" aria-label="Cloud sync"><strong id="sync-status">Sync is off. Your records stay on this device.</strong><div class="actions"><button class="button primary" id="connect-google">Connect with Google to sync</button><button class="button" id="disconnect-google" hidden>Sign out of sync</button></div><small class="muted">When you connect, purchases on this device merge into your private Firebase account. Sign in with the same Google account on each device to sync. CSV export remains available as a backup.</small></section>
-  <div id="notice" role="status" aria-live="polite"></div>
-  <section class="view" id="purchase"><section class="card"><h2>Record a purchase</h2><form id="purchase-form" class="grid">
-    <div class="field"><label for="date">Purchase date</label><input id="date" type="date" required></div>
-    <div class="field"><label for="amount">Amount paid (R)</label><input id="amount" type="number" min="0.01" step="0.01" inputmode="decimal" required></div>
-    <div class="field"><label for="units">Units received (kWh)</label><input id="units" type="number" min="0.01" step="0.01" inputmode="decimal" required></div>
-    <div class="field"><label for="vat">VAT included (R)</label><input id="vat" type="number" min="0" step="0.01" inputmode="decimal" value="0"></div>
-    <div class="field full"><label for="notes">Notes (optional)</label><input id="notes" type="text" maxlength="160" placeholder="e.g. prepaid meter"></div>
-    <div class="field full actions"><button class="button primary" type="submit">Save purchase</button><button class="button" type="reset">Clear form</button></div>
-  </form></section></section>
-  <section class="view" id="statistics" hidden><section class="card"><h2>Statistics</h2><div class="grid" style="margin-bottom:14px"><div><label for="from-date">From</label><input type="date" id="from-date"></div><div><label for="to-date">To</label><input type="date" id="to-date"></div></div><div class="actions" style="margin:0 0 14px"><button class="button" id="apply-filter">Apply date range</button><button class="button" id="clear-filter">All time</button></div><div class="stats" id="stats"></div></section></section>
-  <section class="view" id="history" hidden><section class="card"><h2>Purchase history</h2><div class="actions" style="margin:0 0 12px"><button class="button primary" id="export">Export CSV backup</button><label class="button" for="import-file" style="cursor:pointer">Import CSV<input id="import-file" type="file" accept=".csv,text/csv" hidden></label></div><p class="muted">Purchases are saved on this device and sync to your private Firebase account when connected. Export a CSV backup regularly.</p><div class="table-wrap"><table><thead><tr><th>Date</th><th>Paid</th><th>Units</th><th>Cost/kWh</th><th>VAT</th><th>Notes</th><th></th></tr></thead><tbody id="history-rows"></tbody></table></div><p id="empty" class="muted">No purchases recorded yet.</p></section></section>
-</main><footer>Records stay on this device until you connect Google sync. CSV backups can be moved between devices.</footer>
+<div class="notice">Your records are saved on this device/browser. Use Export regularly to keep a backup. Clearing browser data can erase records.</div><div class="card" id="cloud-sync"><strong id="sync-status">Sync is off. Your records stay on this device.</strong><div class="actions"><button type="button" class="secondary" id="connect-google">Connect with Google to sync</button><button type="button" class="secondary" id="disconnect-google" hidden>Sign out of sync</button></div><p class="hint">When connected, all purchase details, including any credit token, sync to the private Firebase account for the Google account you choose. Connect with the same account on each device.</p></div>
+<nav class="tabs" aria-label="Sections">
+<button class="tab active" data-tab="capture">＋ Capture</button><button class="tab" data-tab="stats">▥ Statistics</button><button class="tab" data-tab="history">▤ History</button>
+</nav>
+<section id="capture">
+<div class="card">
+<h2 id="formTitle">Add electricity purchase</h2>
+<form id="entryForm">
+<input type="hidden" id="editId">
+<div class="grid">
+<div class="field"><label for="date">Purchase date *</label><input id="date" type="date" required></div>
+<div class="field"><label for="time">Purchase time</label><input id="time" type="time"></div>
+<div class="field"><label for="provider">Provider</label><input id="provider" value="City Power Johannesburg"></div>
+<div class="field"><label for="payment">Payment method</label><select id="payment"><option>FNB</option><option>Other bank</option><option>Retailer</option><option>Other</option></select></div>
+<div class="field"><label for="amount">Amount paid (R) *</label><input id="amount" type="number" min="0" step="0.01" placeholder="200.00" required></div>
+<div class="field"><label for="vat">VAT amount (R)</label><input id="vat" type="number" min="0" step="0.01" placeholder="26.09"></div>
+<div class="field"><label for="units">Units purchased (kWh) *</label><input id="units" type="number" min="0" step="0.01" placeholder="59.9" required></div>
+<div class="field"><label for="meter">Meter number</label><input id="meter" inputmode="numeric" placeholder="Meter number"></div>
+<div class="field full"><label for="reference">Receipt / transaction reference</label><input id="reference" placeholder="Optional reference"></div>
+<div class="field full"><label for="token">Credit token (optional)</label><input id="token" autocomplete="off" placeholder="Store only if needed"></div>
+<div class="field full"><label for="notes">Notes</label><textarea id="notes" placeholder="Any useful details"></textarea></div>
+</div>
+<div class="actions"><button class="primary" type="submit" id="saveBtn">Save purchase</button><button class="secondary" type="button" id="clearBtn">Clear form</button></div>
+<p class="hint">Cost per kWh is calculated automatically from amount paid ÷ units purchased.</p>
+</form>
+</div>
+<div class="card">
+<h2>Receipt example</h2>
+<p class="hint">Load the values from the image you supplied as a sample record. The date is set to today because the receipt date is not visible; edit it if needed.</p>
+<button class="secondary" id="sampleBtn">Load sample receipt</button>
+</div>
+</section>
+<section id="stats" class="hidden">
+<div class="card"><h2>Statistics overview</h2><div class="grid three">
+<div class="field"><label for="period">Period</label><select id="period"><option value="all">All time</option><option value="month">This month</option><option value="year">This year</option></select></div>
+<div class="field"><label for="fromDate">From date (optional)</label><input id="fromDate" type="date"></div>
+<div class="field"><label for="toDate">To date (optional)</label><input id="toDate" type="date"></div>
+</div></div>
+<div class="stats" id="statCards"></div>
+<div class="card"><h2>Monthly spending</h2><div id="monthlyChart"></div></div>
+<div class="card"><h2>Recent purchase averages</h2><div id="averages"></div></div>
+</section>
+<section id="history" class="hidden">
+<div class="card"><h2>Purchase history</h2>
+<div class="grid"><div class="field"><label for="search">Search records</label><input id="search" placeholder="Date, meter, reference…"></div><div class="field"><label for="sort">Sort by</label><select id="sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="amount">Highest amount</option></select></div></div>
+<div class="actions"><button class="secondary" id="exportBtn">Export CSV backup</button><label class="filebtn secondary" style="text-align:center">Import CSV backup<input id="importFile" type="file" accept=".csv,text/csv" hidden></label><button class="danger" id="clearAllBtn">Delete all</button></div>
+<p class="hint">CSV export includes purchase details and credit tokens. Keep the file private.</p>
+<div id="historyList"></div>
+</div>
+</section>
+<footer>City Power Tracker • Local records with optional private Google sync • Not affiliated with City Power or FNB</footer>
+</main>
 <script>
-(()=>{'use strict';const KEY='city-power-tracker-purchases-v1';let purchases=load();const $=s=>document.querySelector(s),money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2}),today=()=>new Date().toISOString().slice(0,10),notice=m=>{$('#notice').textContent=m;setTimeout(()=>{$('#notice').textContent=''},3500)};function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch{return []}}function persist(){const before=load();localStorage.setItem(KEY,JSON.stringify(purchases));render();const now=new Set(purchases.map(p=>p.id));window.dispatchEvent(new CustomEvent('tracker-local-changed',{detail:{records:purchases,deletedIds:before.filter(p=>!now.has(p.id)).map(p=>p.id)}}))}window.addEventListener('tracker-cloud-changed',e=>{purchases=Array.isArray(e.detail)?e.detail:[];localStorage.setItem(KEY,JSON.stringify(purchases));render()});function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function filtered(){const f=$('#from-date').value,t=$('#to-date').value;return purchases.filter(p=>(!f||p.date>=f)&&(!t||p.date<=t))}function render(){const list=[...purchases].sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));$('#history-rows').innerHTML=list.map(p=>`<tr><td>${esc(p.date)}</td><td>${money(p.amount)}</td><td>${Number(p.units).toFixed(2)} kWh</td><td>${money(p.amount/p.units)}</td><td>${money(p.vat)}</td><td>${esc(p.notes)}</td><td><button class="delete" data-delete="${esc(p.id)}" aria-label="Delete purchase">Delete</button></td></tr>`).join('');$('#empty').hidden=list.length>0;const a=filtered(),sum=k=>a.reduce((n,p)=>n+Number(p[k]||0),0),spent=sum('amount'),units=sum('units');$('#stats').innerHTML=`<div class="stat"><small>Total spent</small><strong>${money(spent)}</strong></div><div class="stat"><small>Units purchased</small><strong>${units.toFixed(2)} kWh</strong></div><div class="stat"><small>Average cost</small><strong>${units?money(spent/units)+'/kWh':'R0.00/kWh'}</strong></div><div class="stat"><small>VAT recorded</small><strong>${money(sum('vat'))}</strong></div><div class="stat"><small>Purchases</small><strong>${a.length}</strong></div>`}function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}function toCSV(rows){return ['date,amount,units,vat,notes',...rows.map(p=>[p.date,p.amount,p.units,p.vat,p.notes].map(csvCell).join(','))].join('\r\n')}function parseCSV(text){const lines=text.replace(/^\uFEFF/,'').split(/\r?\n/).filter(x=>x.trim());if(lines.length<2)return [];function row(s){let out=[],v='',q=false;for(let i=0;i<s.length;i++){if(s[i]==='"'&&q&&s[i+1]==='"'){v+='"';i++}else if(s[i]==='"')q=!q;else if(s[i]===','&&!q){out.push(v);v=''}else v+=s[i]}out.push(v);return out}const head=row(lines[0]).map(s=>s.trim().toLowerCase());const idx=n=>head.indexOf(n);return lines.slice(1).map(line=>{const c=row(line),get=n=>idx(n)>=0?c[idx(n)]||'':'';const date=get('date'),amount=Number(get('amount')),units=Number(get('units')),vat=Number(get('vat')||0);if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(amount)||amount<=0||!Number.isFinite(units)||units<=0||!Number.isFinite(vat)||vat<0) return null;return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),date,amount,units,vat,notes:get('notes')}}).filter(Boolean)}
-$('#date').value=today();$('#purchase-form').addEventListener('submit',e=>{e.preventDefault();const p={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date:$('#date').value,amount:Number($('#amount').value),units:Number($('#units').value),vat:Number($('#vat').value||0),notes:$('#notes').value.trim()};if(p.vat>p.amount){notice('VAT cannot exceed the amount paid.');return}purchases.push(p);persist();e.target.reset();$('#date').value=today();$('#vat').value='0';notice('Purchase saved locally; syncing if connected.')});document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.hidden=x.id!==b.dataset.view);render()}));$('#history-rows').addEventListener('click',e=>{const id=e.target.dataset.delete;if(id){purchases=purchases.filter(p=>p.id!==id);persist();notice('Purchase deleted.')}});$('#apply-filter').onclick=render;$('#clear-filter').onclick=()=>{$('#from-date').value='';$('#to-date').value='';render()};$('#export').onclick=()=>{const blob=new Blob(['\uFEFF'+toCSV(purchases)],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='city-power-tracker-backup-'+today()+'.csv';a.click();URL.revokeObjectURL(a.href);notice('CSV backup downloaded.')};$('#import-file').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const rows=parseCSV(await file.text());if(!rows.length)throw Error('No valid rows found. Use the exported CSV format.');const keys=new Set(purchases.map(p=>`${p.date}|${p.amount}|${p.units}|${p.vat}|${p.notes}`));let added=0;for(const p of rows){const k=`${p.date}|${p.amount}|${p.units}|${p.vat}|${p.notes}`;if(!keys.has(k)){purchases.push(p);keys.add(k);added++}}persist();notice(`${added} purchase${added===1?'':'s'} imported.`)}catch(err){notice(err.message||'Could not read that CSV file.')}e.target.value=''});render();if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))})();
+const $=id=>document.getElementById(id);
+const STORAGE_KEY='city_power_tracker_v1';
+let records=[];
+try{records=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');if(!Array.isArray(records))records=[]}catch(e){records=[]}
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+$('date').value=today();
+function saveAll(){let before=[];try{before=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch(e){}localStorage.setItem(STORAGE_KEY,JSON.stringify(records));renderAll();const ids=new Set(records.map(r=>r.id));window.dispatchEvent(new CustomEvent('tracker-local-changed',{detail:{records,deletedIds:before.filter(r=>!ids.has(r.id)).map(r=>r.id)}}))}window.addEventListener('tracker-cloud-changed',e=>{records=Array.isArray(e.detail)?e.detail:[];localStorage.setItem(STORAGE_KEY,JSON.stringify(records));renderAll()});
+function money(n){return 'R'+(Number(n)||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function num(n,d=2){return (Number(n)||0).toLocaleString('en-ZA',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function switchTab(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));['capture','stats','history'].forEach(id=>$(id).classList.toggle('hidden',id!==tab));if(tab==='stats')renderStats();if(tab==='history')renderHistory()}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+$('entryForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const amount=Number($('amount').value),units=Number($('units').value);
+ if(amount<0||units<=0){alert('Enter an amount of R0 or more and units greater than zero.');return}
+ const oldId=$('editId').value;
+ const rec={id:oldId||String(Date.now())+'-'+Math.random().toString(36).slice(2,7),date:$('date').value,time:$('time').value,provider:$('provider').value.trim()||'City Power Johannesburg',payment:$('payment').value,amount,vat:Number($('vat').value)||0,units,meter:$('meter').value.trim(),reference:$('reference').value.trim(),token:$('token').value.trim(),notes:$('notes').value.trim(),createdAt:new Date().toISOString()};
+ if(oldId){records=records.map(r=>r.id===oldId?rec:r)}else records.push(rec);
+ saveAll();resetForm();switchTab('history');
+});
+function resetForm(){ $('entryForm').reset();$('editId').value='';$('date').value=today();$('provider').value='City Power Johannesburg';$('payment').value='FNB';$('formTitle').textContent='Add electricity purchase';$('saveBtn').textContent='Save purchase'}
+$('clearBtn').addEventListener('click',resetForm);
+$('sampleBtn').addEventListener('click',()=>{resetForm();$('date').value=today();$('time').value='04:56';$('provider').value='City Power Johannesburg';$('payment').value='FNB';$('amount').value='200.00';$('vat').value='26.09';$('units').value='59.9';$('meter').value='07099388881';$('token').value='';$('notes').value='Sample loaded from supplied receipt. Confirm purchase date.';window.scrollTo({top:0,behavior:'smooth'})});
+function editRecord(id){const r=records.find(x=>x.id===id);if(!r)return;switchTab('capture');$('editId').value=r.id;['date','time','provider','payment','amount','vat','units','meter','reference','token','notes'].forEach(k=>$(k).value=r[k]??'');$('formTitle').textContent='Edit electricity purchase';$('saveBtn').textContent='Update purchase';window.scrollTo({top:0,behavior:'smooth'})}
+function deleteRecord(id){if(confirm('Delete this purchase record? This cannot be undone unless you have a backup.')){records=records.filter(r=>r.id!==id);saveAll()}}
+function filteredRecords(){let a=[...records],period=$('period').value,from=$('fromDate').value,to=$('toDate').value;const now=new Date();a=a.filter(r=>{if(!r.date)return false;const d=new Date(r.date+'T12:00:00');if(period==='month'&&(d.getMonth()!==now.getMonth()||d.getFullYear()!==now.getFullYear()))return false;if(period==='year'&&d.getFullYear()!==now.getFullYear())return false;if(from&&r.date<from)return false;if(to&&r.date>to)return false;return true});return a}
+['period','fromDate','toDate'].forEach(id=>$(id).addEventListener('change',renderStats));
+function renderStats(){
+ const a=filteredRecords(),spent=a.reduce((s,r)=>s+(+r.amount||0),0),vat=a.reduce((s,r)=>s+(+r.vat||0),0),units=a.reduce((s,r)=>s+(+r.units||0),0),rate=units?spent/units:0;
+ const cards=[['Total spent',money(spent),a.length+' purchase(s)'],['Units purchased',num(units)+' kWh','Combined units'],['Average cost',units?money(rate)+'/kWh':'—','Amount ÷ units'],['VAT recorded',money(vat),'As entered on receipts']];
+ $('statCards').innerHTML=cards.map(c=>`<div class="stat"><div class="label">${c[0]}</div><div class="value">${c[1]}</div><small>${c[2]}</small></div>`).join('');
+ const map={};a.forEach(r=>{const k=(r.date||'Unknown').slice(0,7);if(!map[k])map[k]={amount:0,units:0,count:0};map[k].amount+=+r.amount||0;map[k].units+=+r.units||0;map[k].count++});
+ const months=Object.entries(map).sort((x,y)=>x[0].localeCompare(y[0])).slice(-12),max=Math.max(1,...months.map(x=>x[1].amount));
+ $('monthlyChart').innerHTML=months.length?months.map(([m,v])=>`<div class="bar-wrap"><div class="bar-label"><span>${safe(m)}</span><strong>${money(v.amount)} · ${num(v.units)} kWh</strong></div><div class="bar"><span style="width:${Math.max(2,v.amount/max*100)}%"></span></div></div>`).join(''):'<div class="empty">Save purchases to see monthly trends.</div>';
+ const last=[...a].sort((x,y)=>(y.date||'').localeCompare(x.date||'')).slice(0,5),avgU=last.length?last.reduce((s,r)=>s+(+r.units||0),0)/last.length:0,avgA=last.length?last.reduce((s,r)=>s+(+r.amount||0),0)/last.length:0;
+ $('averages').innerHTML=last.length?`<p>Based on the latest ${last.length} purchase(s): average purchase is <strong>${money(avgA)}</strong> and average units are <strong>${num(avgU)} kWh</strong>.</p><p class="hint">These are purchased units, not a direct reading of household consumption.</p>`:'<div class="empty">No purchases in this period yet.</div>';
+}
+$('search').addEventListener('input',renderHistory);$('sort').addEventListener('change',renderHistory);
+function renderHistory(){
+ let q=$('search').value.toLowerCase(),a=records.filter(r=>[r.date,r.time,r.provider,r.payment,r.meter,r.reference,r.notes].join(' ').toLowerCase().includes(q));
+ if($('sort').value==='oldest')a.sort((x,y)=>(x.date||'').localeCompare(y.date||''));
+ else if($('sort').value==='amount')a.sort((x,y)=>(+y.amount||0)-(+x.amount||0));
+ else a.sort((x,y)=>(y.date||'').localeCompare(x.date||'')||(y.time||'').localeCompare(x.time||''));
+ $('historyList').innerHTML=a.length?a.map(r=>`<div class="purchase"><div class="purchase-top"><div><strong>${safe(r.date||'No date')} ${safe(r.time||'')}</strong><div class="meta">${safe(r.provider)} · ${safe(r.payment)}</div></div><div class="amount">${money(r.amount)}</div></div><div class="details"><span><strong>${num(r.units)} kWh</strong></span><span>${r.units?money(r.amount/r.units)+'/kWh':'—'}</span><span>VAT: ${money(r.vat)}</span></div><div class="meta">Meter: ${safe(r.meter||'—')} ${r.reference?'· Ref: '+safe(r.reference):''}</div>${r.notes?`<div class="meta">${safe(r.notes)}</div>`:''}<div class="mini-actions"><button class="secondary" onclick="editRecord('${r.id}')">Edit</button><button class="danger" onclick="deleteRecord('${r.id}')">Delete</button></div></div>`).join(''):'<div class="empty">No saved purchases yet. Add your first purchase in Capture.</div>';
+}
+function csvEscape(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+const fields=['date','time','provider','payment','amount','vat','units','meter','reference','token','notes','id'];
+$('exportBtn').addEventListener('click',()=>{const csv=[fields.join(','),...records.map(r=>fields.map(k=>csvEscape(r[k])).join(','))].join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='city-power-purchases-'+today()+'.csv';a.click();URL.revokeObjectURL(url)});
+$('importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const txt=await file.text();const lines=txt.replace(/^\ufeff/,'').split(/\r?\n/).filter(Boolean);const parse=line=>{let out=[],s='',quoted=false;for(let i=0;i<line.length;i++){let c=line[i];if(c==='"'&&line[i+1]==='"'&&quoted){s+='"';i++}else if(c==='"')quoted=!quoted;else if(c===','&&!quoted){out.push(s);s=''}else s+=c}out.push(s);return out};const hdr=parse(lines.shift()).map(x=>x.toLowerCase());const incoming=lines.map(line=>{let cols=parse(line),r={};hdr.forEach((h,i)=>r[h]=cols[i]??'');r.amount=Number(r.amount)||0;r.vat=Number(r.vat)||0;r.units=Number(r.units)||0;r.id=r.id||String(Date.now())+Math.random();return r}).filter(r=>r.date&&r.units>0);if(!incoming.length)throw Error('No valid records found.');const ids=new Set(records.map(r=>r.id));incoming.forEach(r=>{if(ids.has(r.id))r.id=String(Date.now())+Math.random()});records.push(...incoming);saveAll();alert('Imported '+incoming.length+' record(s).')}catch(err){alert('Import failed: '+err.message)}e.target.value=''});
+$('clearAllBtn').addEventListener('click',()=>{if(confirm('Delete ALL saved purchases from this device? Export a backup first if needed.')){records=[];saveAll()}});
+function renderAll(){renderStats();renderHistory()}
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+renderAll();
 </script>
 <script type="module" src="./firebase-sync.js"></script>
-</body></html>
+</body>
+</html>

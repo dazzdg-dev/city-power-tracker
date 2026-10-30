@@ -7,21 +7,29 @@ service cloud.firestore {
       }
       function validPurchase() {
         let data = request.resource.data;
-        return data.keys().hasAll(['id', 'date', 'amount', 'units', 'vat', 'notes'])
-          && data.keys().hasOnly(['id', 'date', 'amount', 'units', 'vat', 'notes'])
+        return data.keys().hasAll(['id', 'date', 'amount', 'units'])
+          && data.keys().hasOnly([
+            'id', 'date', 'time', 'provider', 'payment', 'amount', 'vat', 'units',
+            'meter', 'reference', 'token', 'notes', 'createdAt'
+          ])
           && data.id == purchaseId
           && data.id is string
           && data.id.size() <= 128
           && data.date is string
           && data.date.size() == 10
           && data.amount is number
-          && data.amount > 0
+          && data.amount >= 0
           && data.units is number
           && data.units > 0
-          && data.vat is number
-          && data.vat >= 0
-          && data.notes is string
-          && data.notes.size() <= 160;
+          && (!('time' in data) || (data.time is string && data.time.size() <= 8))
+          && (!('provider' in data) || (data.provider is string && data.provider.size() <= 120))
+          && (!('payment' in data) || (data.payment is string && data.payment.size() <= 40))
+          && (!('vat' in data) || (data.vat is number && data.vat >= 0))
+          && (!('meter' in data) || (data.meter is string && data.meter.size() <= 80))
+          && (!('reference' in data) || (data.reference is string && data.reference.size() <= 200))
+          && (!('token' in data) || (data.token is string && data.token.size() <= 256))
+          && (!('notes' in data) || (data.notes is string && data.notes.size() <= 4000))
+          && (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64));
       }
       allow read, delete: if ownsRecord();
       allow create, update: if ownsRecord() && validPurchase();
